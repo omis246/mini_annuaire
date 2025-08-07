@@ -1,0 +1,323 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px #b0b8d855;
+  padding: 24px 18px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s;
+}
+.card:hover {
+  box-shadow: 0 8px 32px #b0b8d8aa;
+}
+
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px #b0b8d8;
+  padding: 32px 24px;
+}
+
+h1 {
+  color: #1e293b;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 28px;
+  letter-spacing: 1px;
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+  margin: 0 7px;
+  transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+}
+a:hover {
+  color: #fff;
+  background: #2563eb;
+  box-shadow: 0 2px 8px #b0b8d8;
+  text-decoration: none;
+}
+a:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+input, textarea, select {
+  font-size: 1em;
+  margin: 5px 0 15px 0;
+  padding: 8px 10px;
+  border: 1px solid #b0b8d8;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f1f5fa;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+button {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px #b0b8d8;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+  box-shadow: 0 4px 16px #b0b8d8;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul ul {
+  margin-left: 32px;
+  border-left: 2px solid #e0e7ff;
+  padding-left: 18px;
+}
+
+li {
+  margin: 10px 0;
+  padding: 10px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #e5e7eb44;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s, box-shadow 0.2s;
+  border: 1px solid #e0e7ff;
+}
+li:hover {
+  background: #e0e7ff33;
+  box-shadow: 0 2px 8px #b0b8d833;
+}
+
+li > span {
+  flex: 1;
+}
+
+.error, .success {
+  padding: 10px 16px;
+  border-radius: 5px;
+  margin-bottom: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+.error {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+.table th, .table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.table th {
+  background: #f1f5fa;
+  color: #374151;
+  text-align: left;
+}
+
+.cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.cat-card.cat-niveau-0, .cat-niveau-0 {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+}
+.cat-card.cat-niveau-1, .cat-niveau-1 {
+  background: #dcfce7;
+  border-color: #22c55e;
+}
+.cat-card.cat-niveau-2, .cat-niveau-2 {
+  background: #fef9c3;
+  border-color: #eab308;
+}
+.cat-card.cat-niveau-3, .cat-niveau-3 {
+  background: #f3e8ff;
+  border-color: #a21caf;
+}
+.cat-card.cat-niveau-4, .cat-niveau-4 {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+.cat-card {
+  margin-bottom: 0;
+  border: 1.5px solid #dbeafe;
+  box-shadow: 0 2px 10px #dbeafe55;
+  padding: 20px 18px 12px 18px;
+  background: #f8fafc;
+}
+.cat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.cat-label {
+  font-size: 1.18em;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: .5px;
+}
+.cat-actions {
+  display: flex;
+  gap: 8px;
+}
+.cat-actions a {
+  font-size: 0.97em;
+  padding: 5px 12px;
+  border-radius: 5px;
+  background: #e0e7ff;
+  color: #2563eb;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: none;
+}
+.cat-actions a:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.cat-children {
+  margin-top: 12px;
+  margin-left: 24px;
+  border-left: 2px dashed #c7d2fe;
+  padding-left: 16px;
+}
+.btn-main {
+  display: inline-block;
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 10px #dbeafe55;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-main:hover {
+
+/* ----------- FORMULAIRES MODERNES ----------- */
+}
+.form-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px #b0b8d855;
+  padding: 32px 22px 28px 22px;
+  max-width: 480px;
+  margin: 36px auto 0 auto;
+  border: 1.5px solid #dbeafe;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+.form-group label {
+  margin-bottom: 7px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 1.05em;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  font-size: 1em;
+  padding: 10px 12px;
+  border: 1.5px solid #b0b8d8;
+  border-radius: 5px;
+  background: #f1f5fa;
+  transition: border-color 0.2s;
+  margin-bottom: 0;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+.form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+@media (max-width: 700px) {
+  .form-card {
+    padding: 16px 4vw 16px 4vw;
+    max-width: 98vw;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+}
+
+  background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+  color: #fff;
+  box-shadow: 0 4px 18px #dbeafe99;
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 10px 2vw;
+  }
+  h1 {
+    font-size: 1.3em;
+  }
+  .table th, .table td {
+    padding: 7px 4px;
+  }
+}
