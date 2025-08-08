@@ -8,7 +8,7 @@ require_once __DIR__ . '/../utils/validation.php';
 class CategoryController
 {
 
-
+    // Affiche l'organigramme des catégories avec une structure adaptée pour Treant.js
     public function orgchart()
     {
         $categories = $this->categorieModel->getTree();
@@ -48,9 +48,10 @@ class CategoryController
     {
         $this->categorieModel = new Categorie();
     }
-
+    // Affiche la liste des catégories
     public function index()
     {
+
         $categories = $this->categorieModel->getTree();
         $success_message = '';
         if (!empty($_SESSION['success_message'])) {
@@ -59,12 +60,14 @@ class CategoryController
         }
         require __DIR__ . '/../views/category/list.php';
     }
-
+    // Gère la création d'une nouvelle catégorie
     public function create()
     {
+        // Si la requête est de type POST, traite le formulaire
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
             $id_parent = isset($_POST['id_parent']) && validateInt($_POST['id_parent']) ? $_POST['id_parent'] : null;
+            //verifie si libelle est vide
             if (empty($libelle)) {
                 $erreur = 'Le libellé est obligatoire.';
             } else {
@@ -80,10 +83,11 @@ class CategoryController
                 }
             }
         }
+        // Récupère toutes les catégories pour le formulaire (ex. choix du parent)
         $categories = $this->categorieModel->getAll();
         require __DIR__ . '/../views/category/form.php';
     }
-
+    // Gère la modification d'une catégorie existante
     public function update()
     {
         $id = isset($_GET['id']) && validateInt($_GET['id']) ? $_GET['id'] : null;
@@ -114,15 +118,17 @@ class CategoryController
         $parent_path = $this->categorieModel->getParentPath($id);
         require __DIR__ . '/../views/category/form.php';
     }
-
+    // Gère la suppression d'une catégorie
     public function delete()
     {
+        // Inclusion de l'utilitaire CSRF pour la sécurité
         require_once __DIR__ . '/../utils/csrf.php';
         $erreur_suppression = null;
         $success = false;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = isset($_POST['id']) && validateInt($_POST['id']) ? $_POST['id'] : null;
             $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+            // Vérifie la validité du jeton CSRF
             if (!checkCsrfToken($csrf_token)) {
                 logError('CategoryController::delete - CSRF token invalide');
                 showUserError('Erreur de sécurité. Veuillez réessayer.');
@@ -140,7 +146,7 @@ class CategoryController
                 } else {
                     $this->categorieModel->delete($id);
                     $success = true;
-                    $_SESSION['success_message'] = 'Catégorie supprimée avec succès !';
+                    $success_message = 'Catégorie supprimée avec succès !';
                 }
             } catch (Exception $e) {
                 logError('CategoryController::delete - ' . $e->getMessage());

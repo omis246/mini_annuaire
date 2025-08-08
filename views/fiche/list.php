@@ -1,10 +1,11 @@
+<?php require_once __DIR__ . '/../../utils/csrf.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <title>Fiches</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/public/css/style.css">
     <style>
         .fiche-header {
             display: flex;

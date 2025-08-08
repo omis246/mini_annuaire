@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../utils/csrf.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title><?php echo isset($fiche) ? 'Modifier' : 'Ajouter'; ?> une fiche</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/public/css/style.css">
     <style>
         .form-card {
             background: #fff;

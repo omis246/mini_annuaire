@@ -13,7 +13,7 @@ class Fiche
     public function getAll()
     {
         $stmt = $this->db->query('SELECT * FROM fiches');
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($id)
@@ -51,14 +51,14 @@ class Fiche
     {
         $stmt = $this->db->prepare('SELECT c.* FROM categories c JOIN fiche_categorie fc ON c.id = fc.categorie_id WHERE fc.fiche_id = ?');
         $stmt->execute([$id_fiche]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getByCategorie($id_categorie)
     {
         $stmt = $this->db->prepare('SELECT f.* FROM fiches f JOIN fiche_categorie fc ON f.id = fc.fiche_id WHERE fc.categorie_id = ?');
         $stmt->execute([$id_categorie]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function updateCategories($fiche_id, $categories)

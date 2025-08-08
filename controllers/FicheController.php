@@ -1,7 +1,9 @@
 <?php
+// Vérifie si la session n'est pas démarrée et la démarre si nécessaire
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Inclusion des dépendances nécessaires : modèles Fiche et Category, utilitaires de validation et gestion d'erreur
 require_once __DIR__ . '/../models/Fiche.php';
 require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../utils/validation.php';
@@ -9,15 +11,17 @@ require_once __DIR__ . '/../utils/error.php';
 
 class FicheController
 {
+    // Propriétés privées pour stocker les instances des modèles Fiche et Category
     private $ficheModel;
     private $categorieModel;
 
+    // Constructeur : initialise les modèles Fiche et Category
     public function __construct()
     {
         $this->ficheModel = new Fiche();
         $this->categorieModel = new Categorie();
     }
-
+    // Affiche la liste de toutes les fiches
     public function index()
     {
         $fiches = $this->ficheModel->getAll();
@@ -28,11 +32,13 @@ class FicheController
         }
         require __DIR__ . '/../views/fiche/list.php';
     }
-
+    // Gère la création d'une nouvelle fiche
     public function create()
     {
         $errors = [];
         $success_message = '';
+
+        // Si la requête est de type POST, traite le formulaire
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
             $description = isset($_POST['description']) ? sanitizeString($_POST['description']) : '';
@@ -64,7 +70,7 @@ class FicheController
         $categories = $this->categorieModel->getAll();
         require __DIR__ . '/../views/fiche/form.php';
     }
-
+    // Gère la modification d'une fiche existante
     public function update()
     {
         $id = isset($_GET['id']) && validateInt($_GET['id']) ? $_GET['id'] : null;
@@ -96,6 +102,7 @@ class FicheController
                     header('Location: index.php?controller=fiche&action=index');
                     exit;
                 } catch (Exception $e) {
+                    // Enregistre l'erreur dans les logs et affiche un message générique
                     logError('FicheController::update - ' . $e->getMessage());
                     showUserError();
                     return;
@@ -108,13 +115,17 @@ class FicheController
         $fiche_categories = $this->ficheModel->getCategories($id);
         require __DIR__ . '/../views/fiche/form.php';
     }
-
+    // Gère la suppression d'une fiche
     public function delete()
     {
         require_once __DIR__ . '/../utils/csrf.php';
+
+        // Inclusion de l'utilitaire CSRF pour sécuriser la suppression
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = isset($_POST['id']) && validateInt($_POST['id']) ? $_POST['id'] : null;
             $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+
+            // Vérifie la validité du jeton CSRF
             if (!checkCsrfToken($csrf_token)) {
                 logError('FicheController::delete - CSRF token invalide');
                 showUserError('Erreur de sécurité. Veuillez réessayer.');

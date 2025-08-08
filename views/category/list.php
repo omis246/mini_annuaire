@@ -1,29 +1,30 @@
+<?php require_once __DIR__ . '/../../utils/csrf.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <title>Catégories</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/responsive-categories.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/responsive-categories.css">
 </head>
 
 <body>
     <div class="main-wrapper">
         <?php if (!empty($success_message)) : ?>
-            <div id="toast-success" class="toast-success">
-                <?php echo $success_message; ?>
-            </div>
-            <script>
-                setTimeout(function() {
-                    var toast = document.getElementById('toast-success');
-                    if (toast) {
-                        toast.style.opacity = '0';
-                        setTimeout(() => toast.remove(), 600);
-                    }
-                }, 3200);
-            </script>
-        <?php endif; ?>
+    <div id="toast-success" class="toast-success">
+        <?php echo htmlspecialchars($success_message); ?>
+    </div>
+    <script>
+        setTimeout(function() {
+            var toast = document.getElementById('toast-success');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 600);
+            }
+        }, 3200);
+    </script>
+<?php endif; ?>
         <style>
             .toast-success {
                 position: fixed;
@@ -52,8 +53,38 @@
             <a href="index.php?controller=fiche&action=index" class="btn-main" style="background:#7bc87e;color:#222;">Gérer les fiches</a>
             <a href="index.php?controller=category&action=orgchart" class="btn-main" style="background:#3b7bbf;color:#fff;">Organigramme style schéma</a>
             <?php if (!empty($erreur_suppression)) : ?>
-                <div class="error"><strong><?php echo htmlspecialchars($erreur_suppression); ?></strong></div>
-            <?php endif; ?>
+    <div id="toast-error" class="toast-error">
+        <?php echo htmlspecialchars($erreur_suppression); ?>
+    </div>
+    <script>
+        setTimeout(function() {
+            var toast = document.getElementById('toast-error');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 600);
+            }
+        }, 3800);
+    </script>
+<?php endif; ?>
+<style>
+.toast-error {
+    position: fixed;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    background: #e74c3c;
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px #0002;
+    font-size: 1.08em;
+    z-index: 9999;
+    min-width: 200px;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.6s;
+}
+</style>
             <?php
             function afficherArbre($categories, $niveau = 0)
             {
