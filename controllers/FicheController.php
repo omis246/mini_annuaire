@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../models/Fiche.php';
 require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../utils/validation.php';
-require_once __DIR__ . '/../utils/csrf.php';
+require_once __DIR__ . '/../utils/error.php';
 
 class FicheController
 {
@@ -34,32 +34,30 @@ class FicheController
         $errors = [];
         $success_message = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
-                $errors['general'] = 'Erreur de sécurité (CSRF). Veuillez réessayer.';
-            } else {
-                $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
-                $description = isset($_POST['description']) ? sanitizeString($_POST['description']) : '';
-                $categories = isset($_POST['categories']) && is_array($_POST['categories']) ? array_filter($_POST['categories'], 'validateInt') : [];
-                // Validation
-                if ($libelle === '') {
-                    $errors['libelle'] = 'Le libellé est obligatoire.';
-                }
-                if ($description === '') {
-                    $errors['description'] = 'La description est obligatoire.';
-                }
-                if (empty($categories)) {
-                    $errors['categories'] = 'Veuillez sélectionner au moins une catégorie.';
-                }
-                if (empty($errors)) {
-                    try {
-                        $this->ficheModel->create($libelle, $description, $categories);
-                        $success_message = 'Fiche créée avec succès !';
-                        $_SESSION['success_message'] = $success_message;
-                        header('Location: index.php?controller=fiche&action=index');
-                        exit;
-                    } catch (Exception $e) {
-                        $errors['general'] = 'Erreur lors de la création : ' . $e->getMessage();
-                    }
+            $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
+            $description = isset($_POST['description']) ? sanitizeString($_POST['description']) : '';
+            $categories = isset($_POST['categories']) && is_array($_POST['categories']) ? array_filter($_POST['categories'], 'validateInt') : [];
+            // Validation
+            if ($libelle === '') {
+                $errors['libelle'] = 'Le libellé est obligatoire.';
+            }
+            if ($description === '') {
+                $errors['description'] = 'La description est obligatoire.';
+            }
+            if (empty($categories)) {
+                $errors['categories'] = 'Veuillez sélectionner au moins une catégorie.';
+            }
+            if (empty($errors)) {
+                try {
+                    $this->ficheModel->create($libelle, $description, $categories);
+                    $success_message = 'Fiche créée avec succès !';
+                    $_SESSION['success_message'] = $success_message;
+                    header('Location: index.php?controller=fiche&action=index');
+                    exit;
+                } catch (Exception $e) {
+                    logError('FicheController::create - ' . $e->getMessage());
+                    showUserError();
+                    return;
                 }
             }
         }
@@ -77,32 +75,30 @@ class FicheController
         $errors = [];
         $success_message = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
-                $errors['general'] = 'Erreur de sécurité (CSRF). Veuillez réessayer.';
-            } else {
-                $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
-                $description = isset($_POST['description']) ? sanitizeString($_POST['description']) : '';
-                $categories = isset($_POST['categories']) && is_array($_POST['categories']) ? array_filter($_POST['categories'], 'validateInt') : [];
-                // Validation
-                if ($libelle === '') {
-                    $errors['libelle'] = 'Le libellé est obligatoire.';
-                }
-                if ($description === '') {
-                    $errors['description'] = 'La description est obligatoire.';
-                }
-                if (empty($categories)) {
-                    $errors['categories'] = 'Veuillez sélectionner au moins une catégorie.';
-                }
-                if (empty($errors)) {
-                    try {
-                        $this->ficheModel->update($id, $libelle, $description, $categories);
-                        $success_message = 'Fiche modifiée avec succès !';
-                        $_SESSION['success_message'] = $success_message;
-                        header('Location: index.php?controller=fiche&action=index');
-                        exit;
-                    } catch (Exception $e) {
-                        $errors['general'] = 'Erreur lors de la modification : ' . $e->getMessage();
-                    }
+            $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
+            $description = isset($_POST['description']) ? sanitizeString($_POST['description']) : '';
+            $categories = isset($_POST['categories']) && is_array($_POST['categories']) ? array_filter($_POST['categories'], 'validateInt') : [];
+            // Validation
+            if ($libelle === '') {
+                $errors['libelle'] = 'Le libellé est obligatoire.';
+            }
+            if ($description === '') {
+                $errors['description'] = 'La description est obligatoire.';
+            }
+            if (empty($categories)) {
+                $errors['categories'] = 'Veuillez sélectionner au moins une catégorie.';
+            }
+            if (empty($errors)) {
+                try {
+                    $this->ficheModel->update($id, $libelle, $description, $categories);
+                    $success_message = 'Fiche modifiée avec succès !';
+                    $_SESSION['success_message'] = $success_message;
+                    header('Location: index.php?controller=fiche&action=index');
+                    exit;
+                } catch (Exception $e) {
+                    logError('FicheController::update - ' . $e->getMessage());
+                    showUserError();
+                    return;
                 }
             }
         } else {
@@ -115,14 +111,31 @@ class FicheController
 
     public function delete()
     {
-        $id = isset($_GET['id']) && validateInt($_GET['id']) ? $_GET['id'] : null;
+        require_once __DIR__ . '/../utils/csrf.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = isset($_POST['id']) && validateInt($_POST['id']) ? $_POST['id'] : null;
+            $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+            if (!checkCsrfToken($csrf_token)) {
+                logError('FicheController::delete - CSRF token invalide');
+                showUserError('Erreur de sécurité. Veuillez réessayer.');
+                return;
+            }
+        } else {
+            $id = null;
+        }
         if ($id) {
-            $this->ficheModel->delete($id);
-            $_SESSION['success_message'] = 'Fiche supprimée avec succès !';
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'message' => 'Fiche supprimée avec succès !']);
-                exit;
+            try {
+                $this->ficheModel->delete($id);
+                $_SESSION['success_message'] = 'Fiche supprimée avec succès !';
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'message' => 'Fiche supprimée avec succès !']);
+                    exit;
+                }
+            } catch (Exception $e) {
+                logError('FicheController::delete - ' . $e->getMessage());
+                showUserError();
+                return;
             }
         }
         $fiches = $this->ficheModel->getAll();

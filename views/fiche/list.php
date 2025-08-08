@@ -203,10 +203,16 @@
                             <a href="index.php?controller=fiche&action=update&id=<?php echo $fiche['id']; ?>" class="fiche-btn icon-btn" title="Modifier"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;">
                                     <path stroke="#256d3b" stroke-width="2" d="M5 20h14M7 17l9-9a2.121 2.121 0 1 0-3-3l-9 9v3h3z" />
                                 </svg></a>
-                            <a href="index.php?controller=fiche&action=delete&id=<?php echo $fiche['id']; ?>" class="fiche-btn delete delete-fiche icon-btn" title="Supprimer"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;">
-                                    <rect x="5" y="7" width="14" height="12" rx="2" stroke="#c72b2b" stroke-width="2" />
-                                    <path stroke="#c72b2b" stroke-width="2" d="M3 7h18M10 11v4M14 11v4M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                </svg></a>
+                            <form method="POST" action="index.php?controller=fiche&action=delete" style="display:inline;">
+    <input type="hidden" name="id" value="<?php echo $fiche['id']; ?>">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+    <button type="submit" class="fiche-btn delete delete-fiche icon-btn" title="Supprimer" onclick="return confirm('Confirmer la suppression de cette fiche ?');" style="border:none;background:none;padding:0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;">
+            <rect x="5" y="7" width="14" height="12" rx="2" stroke="#c72b2b" stroke-width="2" />
+            <path stroke="#c72b2b" stroke-width="2" d="M3 7h18M10 11v4M14 11v4M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+        </svg>
+    </button>
+</form>
                         </td>
                     </tr>
                 <?php endforeach; ?>

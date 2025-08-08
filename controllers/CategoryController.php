@@ -4,7 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../utils/validation.php';
-require_once __DIR__ . '/../utils/csrf.php';
 
 class CategoryController
 {
@@ -14,14 +13,15 @@ class CategoryController
     {
         $categories = $this->categorieModel->getTree();
         // Liste des racines pour le menu déroulant
-        $rootCategories = array_map(function($cat) {
+        $rootCategories = array_map(function ($cat) {
             return [
                 'id' => $cat['id'],
                 'libelle' => $cat['libelle']
             ];
         }, $categories);
         // Générer la structure Treant.js
-        function buildTreantNode($cat) {
+        function buildTreantNode($cat)
+        {
             $node = [
                 'id' => $cat['id'],
                 'text' => ['name' => $cat['libelle']],
@@ -63,18 +63,20 @@ class CategoryController
     public function create()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
-                $erreur = 'Erreur de sécurité (CSRF). Veuillez réessayer.';
+            $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
+            $id_parent = isset($_POST['id_parent']) && validateInt($_POST['id_parent']) ? $_POST['id_parent'] : null;
+            if (empty($libelle)) {
+                $erreur = 'Le libellé est obligatoire.';
             } else {
-                $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
-                $id_parent = isset($_POST['id_parent']) && validateInt($_POST['id_parent']) ? $_POST['id_parent'] : null;
-                if (empty($libelle)) {
-                    $erreur = 'Le libellé est obligatoire.';
-                } else {
+                try {
                     $this->categorieModel->create($libelle, $id_parent);
                     $_SESSION['success_message'] = 'Catégorie créée avec succès !';
                     header('Location: index.php?controller=category&action=index');
                     exit;
+                } catch (Exception $e) {
+                    logError('CategoryController::create - ' . $e->getMessage());
+                    showUserError();
+                    return;
                 }
             }
         }
@@ -90,18 +92,20 @@ class CategoryController
             exit;
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
-                $erreur = 'Erreur de sécurité (CSRF). Veuillez réessayer.';
+            $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
+            $id_parent = isset($_POST['id_parent']) && validateInt($_POST['id_parent']) ? $_POST['id_parent'] : null;
+            if (empty($libelle)) {
+                $erreur = 'Le libellé est obligatoire.';
             } else {
-                $libelle = isset($_POST['libelle']) ? sanitizeString($_POST['libelle']) : '';
-                $id_parent = isset($_POST['id_parent']) && validateInt($_POST['id_parent']) ? $_POST['id_parent'] : null;
-                if (empty($libelle)) {
-                    $erreur = 'Le libellé est obligatoire.';
-                } else {
+                try {
                     $this->categorieModel->update($id, $libelle, $id_parent);
                     $_SESSION['success_message'] = 'Catégorie modifiée avec succès !';
                     header('Location: index.php?controller=category&action=index');
                     exit;
+                } catch (Exception $e) {
+                    logError('CategoryController::update - ' . $e->getMessage());
+                    showUserError();
+                    return;
                 }
             }
         }
@@ -113,18 +117,35 @@ class CategoryController
 
     public function delete()
     {
-        $id = isset($_GET['id']) && validateInt($_GET['id']) ? $_GET['id'] : null;
+        require_once __DIR__ . '/../utils/csrf.php';
         $erreur_suppression = null;
         $success = false;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = isset($_POST['id']) && validateInt($_POST['id']) ? $_POST['id'] : null;
+            $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+            if (!checkCsrfToken($csrf_token)) {
+                logError('CategoryController::delete - CSRF token invalide');
+                showUserError('Erreur de sécurité. Veuillez réessayer.');
+                return;
+            }
+        } else {
+            $id = null;
+        }
         if ($id) {
-            // Vérifier si la catégorie a des enfants
-            $enfants = $this->categorieModel->getChildren($id);
-            if (!empty($enfants)) {
-                $erreur_suppression = "Impossible de supprimer : cette catégorie possède des sous-catégories.";
-            } else {
-                $this->categorieModel->delete($id);
-                $success = true;
-                $_SESSION['success_message'] = 'Catégorie supprimée avec succès !';
+            try {
+                // Vérifier si la catégorie a des enfants
+                $enfants = $this->categorieModel->getChildren($id);
+                if (!empty($enfants)) {
+                    $erreur_suppression = "Impossible de supprimer : cette catégorie possède des sous-catégories.";
+                } else {
+                    $this->categorieModel->delete($id);
+                    $success = true;
+                    $_SESSION['success_message'] = 'Catégorie supprimée avec succès !';
+                }
+            } catch (Exception $e) {
+                logError('CategoryController::delete - ' . $e->getMessage());
+                showUserError();
+                return;
             }
         }
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {

@@ -7,11 +7,11 @@ class Database
 
     private function __construct()
     {
-        // Paramètres de connexion (adapter selon le contexte local/distant)
+        // Paramètres pour l’hébergement
         $host = 'localhost';
-        $dbname = 'mini_annuaire_local';
-        $user = 'root';
-        $pass = '';
+        $dbname = 'dbtestdevphpkevins195608com';
+        $user = 'testdes195608com';
+        $pass = 'pTpxrxDzyHye9yezGP';
 
         try {
             $this->pdo = new PDO(
