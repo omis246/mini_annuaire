@@ -1,0 +1,33 @@
+/* Responsivité optimisée pour les catégories et actions sur mobile/tablette */
+@media (max-width: 900px) {
+  .cat-list {
+    gap: 8px;
+  }
+  .cat-card {
+    padding: 8px 1vw 6px 1vw;
+    min-width: 0;
+    max-width: 99vw;
+  }
+  .cat-row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .cat-label {
+    font-size: 0.99em;
+    margin-bottom: 2px;
+    word-break: break-word;
+    max-width: 60vw;
+  }
+  .cat-actions {
+    gap: 4px;
+    width: auto;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .cat-actions a {
+    font-size: 1em;
+    padding: 3px 7px;
+  }
+}

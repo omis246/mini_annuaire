@@ -55,6 +55,22 @@ class Categorie
         return $stmt->fetchAll();
     }
 
+    // Retourne le chemin complet des parents (de la racine jusqu'à la catégorie $id)
+    public function getParentPath($id) {
+        $path = [];
+        $current = $this->getById($id);
+        while ($current && $current['id_parent']) {
+            $parent = $this->getById($current['id_parent']);
+            if ($parent) {
+                array_unshift($path, $parent['libelle']);
+                $current = $parent;
+            } else {
+                break;
+            }
+        }
+        return $path;
+    }
+
     public function getTree($id_parent = null)
     {
         $stmt = $this->db->prepare('SELECT * FROM categories WHERE id_parent ' . ($id_parent === null ? 'IS NULL' : '= ?'));

@@ -29,15 +29,17 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             if (!confirm('Supprimer ?')) return;
-            const li = btn.closest('li');
+            const container = btn.closest('li') || btn.closest('.cat-card');
             fetch(btn.href, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
-                        li.style.backgroundColor = '#f8d7da';
-                        li.style.transition = 'opacity 0.5s';
-                        li.style.opacity = '0';
-                        setTimeout(() => li.remove(), 500);
+                        if (container) {
+                            container.style.backgroundColor = '#f8d7da';
+                            container.style.transition = 'opacity 0.5s';
+                            container.style.opacity = '0';
+                            setTimeout(() => container.remove(), 500);
+                        }
                         showToast('Catégorie supprimée avec succès');
                     } else {
                         showToast(data.error || 'Erreur lors de la suppression', true);
